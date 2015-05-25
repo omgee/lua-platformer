@@ -1,4 +1,4 @@
-
+io.stdout:setvbuf("no")
 --Загрузочная функция love2d
 
 function love.load()
@@ -16,13 +16,13 @@ function love.load()
 --  Карта (матрица 10х10)
 
   map = {
-    {1,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1},
     {1,0,1,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
-    {1,0,1,1,1,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1}
@@ -31,7 +31,7 @@ function love.load()
 --  Класс ГГ
 
   player = {
-    x = 64,
+    x = 32,
     y = 118,
     jump = false,
     jumpSize = 0,
@@ -49,6 +49,42 @@ function love.load()
     }
   }
   
+--  Функция дебага (не думал что пригодиться)
+  
+  function player.debug()
+    
+    if player.coll.left then
+      left = 1
+    else
+      left = 0
+    end
+    
+    if player.coll.right then
+      right = 1
+    else
+      right = 0
+    end
+    
+    if player.coll.top then
+      top = 1
+    else
+      top = 0
+    end
+    
+    if player.coll.bottom then
+      bottom = 1
+    else
+      bottom = 0
+    end
+    
+    print(
+      "Left: " .. left .. 
+      ", Right: " .. right ..
+      ", Top: " .. top ..
+      ", Bottom: " .. bottom
+    )
+  end
+
 --  Для удобства
   
   pp = player.points
@@ -92,6 +128,34 @@ function love.load()
     end
   end
   
+--  Расчет коллизии правого бокового блока
+  
+  function player.right(unit)
+    local x1 = math.floor((pp.rTop.x + unit) / 32) + 1
+    local x2 = math.floor((pp.rBottom.x + unit) / 32) + 1
+    local y1 = math.floor((pp.rTop.y + 1) / 32) + 1
+    local y2 = math.floor((pp.rBottom.y - 1) / 32) + 1
+    if map[x1][y1] == 1 or map[x2][y2] == 1 then
+      player.x = (x1 - 2) * 32
+      player.coll.right = true
+    else
+      player.coll.right = false
+    end
+  end
+  
+  function player.left(unit)
+    local x1 = math.floor((pp.lTop.x - unit) / 32) + 1
+    local x2 = math.floor((pp.lBottom.x - unit) / 32) + 1
+    local y1 = math.floor((pp.lTop.y + 1) / 32) + 1
+    local y2 = math.floor((pp.lBottom.y - 1) / 32) + 1
+    if map[x1][y1] == 1 or map[x2][y2] == 1 then
+      player.x = x1 * 32
+      player.coll.left = true
+    else
+      player.coll.left = false
+    end
+  end
+  
 end
 
 --  Работа с клавиатурой
@@ -112,6 +176,10 @@ end
 
 function love.update(dt)
   
+--  Дебаг
+  
+  player.debug()
+  
 --  Еденица движения
 
   unit = dt * 500
@@ -119,10 +187,14 @@ function love.update(dt)
   player.getPoints()
   player.bottom(unit)
   player.top(unit)
+  player.right(unit)
+  player.left(unit)
   
   if not player.coll.bottom and not player.jump then
     player.y = player.y + unit
   end
+  
+--  Прыжок
   
   if player.jump and player.jumpSize < 16 and not player.coll.top then
     player.jumpSize = player.jumpSize + 1
@@ -131,6 +203,11 @@ function love.update(dt)
     player.jumpSize = 0
     player.jump = false
   end
+  
+  if not player.coll.right and kb.isDown("d") then
+    player.x = player.x + unit
+  end
+  
 end
 
 --Функция отрисовки
