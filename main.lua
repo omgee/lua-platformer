@@ -17,12 +17,12 @@ function love.load()
 
   map = {
     {1,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
+    {1,0,1,1,1,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1}
@@ -31,10 +31,10 @@ function love.load()
 --  Класс ГГ
 
   player = {
-    x = 44,
-    y = 44,
-    horizontalSpeed = 0,
-    verticalSpeed = 0,
+    x = 64,
+    y = 118,
+    jump = false,
+    jumpSize = 0,
     coll = {
       left = false,
       right = false,
@@ -49,21 +49,63 @@ function love.load()
     }
   }
   
+--  Для удобства
+  
+  pp = player.points
+  
 --  Функция получения координат угловых точек ГГ
 
   function player.getPoints()
-    player.points.lTop = {x = player.x, y = player.y}
-    player.points.rTop = {x = player.x + 32, y = player.y}
-    player.points.lBottom = {x = player.x, y = player.y + 32}
-    player.points.rBottom = {x = player.x + 32, y = player.y + 32}
+    pp.lTop = {x = player.x, y = player.y}
+    pp.rTop = {x = player.x + 32, y = player.y}
+    pp.lBottom = {x = player.x, y = player.y + 32}
+    pp.rBottom = {x = player.x + 32, y = player.y + 32}
   end
   
 --  Расчет коллизии нижнего блока
   
-  function player.bottom()
-    
+  function player.bottom(unit)
+    local x1 = math.floor((pp.lBottom.x + 1) / 32) + 1
+    local x2 = math.floor((pp.rBottom.x - 1) / 32) + 1
+    local y1 = math.floor((pp.lBottom.y + unit) / 32) + 1
+    local y2 = math.floor((pp.rBottom.y + unit) / 32) + 1
+    if map[y1][x1] == 1 or map[y2][x2] == 1 then
+      player.y = (y1 - 2) * 32
+      player.coll.bottom = true
+    else
+      player.coll.bottom = false
+    end
   end
   
+--  Расчет коллизии верхнего блока
+
+  function player.top(unit)
+    local x1 = math.floor((pp.lTop.x + 1) / 32) + 1
+    local x2 = math.floor((pp.rTop.x - 1) / 32) + 1
+    local y1 = math.floor((pp.lTop.y - unit) / 32) + 1
+    local y2 = math.floor((pp.rTop.y - unit) / 32) + 1
+    if map[y1][x1] == 1 or map[y2][x2] == 1 then
+      player.y = y1 * 32
+      player.coll.top = true
+    else
+      player.coll.top = false
+    end
+  end
+  
+end
+
+--  Работа с клавиатурой
+
+function love.keypressed(key)
+  if key == " " and player.coll.bottom then
+    player.jump = true
+  end
+end
+
+function love.keyreleased(key)
+  if key == " " then
+    player.jump = false
+  end
 end
 
 --Функция расчета
@@ -72,9 +114,23 @@ function love.update(dt)
   
 --  Еденица движения
 
-  unit = dt * 250
+  unit = dt * 500
   
   player.getPoints()
+  player.bottom(unit)
+  player.top(unit)
+  
+  if not player.coll.bottom and not player.jump then
+    player.y = player.y + unit
+  end
+  
+  if player.jump and player.jumpSize < 16 and not player.coll.top then
+    player.jumpSize = player.jumpSize + 1
+    player.y = player.y - unit
+  else
+    player.jumpSize = 0
+    player.jump = false
+  end
 end
 
 --Функция отрисовки
