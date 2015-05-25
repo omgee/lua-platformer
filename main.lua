@@ -16,16 +16,16 @@ function love.load()
 --  Карта (матрица 10х10)
 
   map = {
+    {0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0},
+    {1,0,0,0,1,1,1,1,0,0},
+    {1,1,0,0,0,0,0,0,0,0},
+    {1,1,1,0,0,0,0,0,0,0},
     {1,1,1,1,1,1,1,1,1,1},
-    {1,0,1,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1}
   }
   
 --  Класс ГГ
@@ -81,7 +81,9 @@ function love.load()
       "Left: " .. left .. 
       ", Right: " .. right ..
       ", Top: " .. top ..
-      ", Bottom: " .. bottom
+      ", Bottom: " .. bottom ..
+      ", X: " .. player.x ..
+      ", Y: " .. player.y
     )
   end
 
@@ -143,11 +145,13 @@ function love.load()
     end
   end
   
+--  Коллизия левого блока
+  
   function player.left(unit)
     local x1 = math.floor((pp.lTop.x - unit) / 32) + 1
     local x2 = math.floor((pp.lBottom.x - unit) / 32) + 1
-    local y1 = math.floor((pp.lTop.y + 1) / 32) + 1
-    local y2 = math.floor((pp.lBottom.y - 1) / 32) + 1
+    local y1 = math.floor((pp.lTop.y) / 32) + 1
+    local y2 = math.floor((pp.lBottom.y) / 32) + 1
     if map[x1][y1] == 1 or map[x2][y2] == 1 then
       player.x = x1 * 32
       player.coll.left = true
@@ -185,10 +189,10 @@ function love.update(dt)
   unit = dt * 500
   
   player.getPoints()
-  player.bottom(unit)
-  player.top(unit)
   player.right(unit)
   player.left(unit)
+  player.bottom(unit)
+  player.top(unit)
   
   if not player.coll.bottom and not player.jump then
     player.y = player.y + unit
@@ -206,6 +210,10 @@ function love.update(dt)
   
   if not player.coll.right and kb.isDown("d") then
     player.x = player.x + unit
+  end
+  
+  if not player.coll.left and kb.isDown("a") then
+    player.x = player.x - unit
   end
   
 end
