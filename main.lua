@@ -1,4 +1,3 @@
-io.stdout:setvbuf("no")
 --Загрузочная функция love2d
 
 function love.load()
@@ -42,6 +41,10 @@ function love.load()
       bottom = false
     }
   }
+  
+--  Подгрузка графики
+
+  block = gr.newImage("block.png")
  
 --  Расчет вертикальной коллизии
   
@@ -141,19 +144,19 @@ end
 --Функция отрисовки
 
 function love.draw()
-  
+  gr.setColor(255, 255, 255)
 --  Отрисовка карты
   
   for i = 1, #map do
     for k = 1, #map[i] do
       if map[i][k] == 1 then
-        gr.rectangle("fill", (k - 1) * 32, (i - 1) * 32, 32, 32)
+        gr.draw(block, (k - 1) * 32, (i - 1) * 32)
       end
     end
   end
   
 --  Отрисовка ГГ
   
-  gr.rectangle("fill", player.x, player.y, 32, 32)
+  gr.draw(block, player.x, player.y)
   
 end
