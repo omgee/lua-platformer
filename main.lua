@@ -15,23 +15,24 @@ function love.load()
 --  Карта (матрица 10х10)
 
   map = {
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,1,1,1,1,0,0},
-    {1,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,1,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   }
   
 --  Класс ГГ
 
   player = {
-    x = 111,
-    y = 118,
+    x = 32,
+    y = 32,
+    cx = 0,
     jump = false,
     jumpSize = 0,
     coll = {
@@ -72,8 +73,8 @@ function love.load()
   function player.horizontal(unit)
     local y1 = math.floor((player.y + 1) / 32) + 1
     local y2 = math.floor((player.y + 31) / 32) + 1
-    local x1 = math.floor((player.x - unit) / 32) + 1
-    local x2 = math.floor((player.x + 32 + unit) / 32) + 1
+    local x1 = math.floor((144 - unit + player.cx) / 32) + 1
+    local x2 = math.floor((144 + 32 + unit + player.cx) / 32) + 1
     if map[y1][x1] == 0 and map[y2][x1] == 0 then
       player.coll.left = false
     elseif kb.isDown("a") or kb.isDown("d") then
@@ -132,10 +133,12 @@ function love.update(dt)
   end
   
   if not player.coll.left and kb.isDown("a") then
+    player.cx = player.cx - unit
     player.x = player.x - unit
   end
   
   if not player.coll.right and kb.isDown("d") then
+    player.cx = player.cx + unit
     player.x = player.x + unit
   end
   
@@ -154,13 +157,13 @@ function love.draw()
   for i = 1, #map do
     for k = 1, #map[i] do
       if map[i][k] == 1 then
-        gr.draw(block, (k - 1) * 32, (i - 1) * 32)
+        gr.draw(block, ((k - 1) * 32) - player.cx, (i - 1) * 32)
       end
     end
   end
   
 --  Отрисовка ГГ
   
-  gr.draw(block, player.x, player.y)
+  gr.draw(block, 144, player.y)
   
 end
