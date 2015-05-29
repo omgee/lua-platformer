@@ -142,12 +142,26 @@ function love.update(dt)
   if not player.coll.right and kb.isDown("d") then
     
     player.x = player.x + unit
+  
   end
   -- делаем норм cx
- 
+end
   
+  
+  function ox(x, unit, cx)
+  if player.x - unit then
+    cx = cx - unit
+  else cx = 0
+  if player.x + unit then
+    cx = cx + unit
+    else cx = 0
     
   end
+end
+end
+    
+    
+  
   
    
   
@@ -167,14 +181,14 @@ function love.draw()
   for i = 1, #map do
     for k = 1, #map[i] do
       if map[i][k] == 1 then
-        gr.draw(block, (k - 1) * 32 , (i - 1) * 32)
+        gr.draw(block, ((k - 1) * 32) - player.cx , (i - 1) * 32)
       end
     end
   end
   
 --  Отрисовка ГГ
   
-  gr.draw(iplayer, 144, player.y)
+  gr.draw(iplayer, x, player.y, player.cx)
   gr.print(player.x, 0, 0)
   
 end
