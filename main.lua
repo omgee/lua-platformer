@@ -1,3 +1,4 @@
+
 --Загрузочная функция love2d
 
 function love.load()
@@ -9,7 +10,7 @@ function love.load()
   kb = love.keyboard
   gr.setBackgroundColor(255, 255, 255)
   gr.setColor(0, 0, 0)
-  wn.setMode(320, 320)
+  wn.setMode(480, 480)
   wn.setTitle("Test platformer")
   
 --  Карта (матрица 10х10)
@@ -21,16 +22,21 @@ function love.load()
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,1},
+    {1,0,0,0,1,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1},
+    {1,0,1,0,1,0,1,0,0,0,0,0,0,1,1,1,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   }
   
 --  Класс ГГ
 
   player = {
-    x = 32,
+    x = 224,
     y = 32,
     cx = 0,
     jump = false,
@@ -73,19 +79,21 @@ function love.load()
   function player.horizontal(unit)
     local y1 = math.floor((player.y + 1) / 32) + 1
     local y2 = math.floor((player.y + 31) / 32) + 1
-    local x1 = math.floor((144 - unit + player.cx) / 32) + 1
-    local x2 = math.floor((144 + 32 + unit + player.cx) / 32) + 1
+    local x1 = math.floor((224 - unit + player.cx) / 32) + 1
+    local x2 = math.floor((224 + 32 + unit + player.cx) / 32) + 1
     if map[y1][x1] == 0 and map[y2][x1] == 0 then
       player.coll.left = false
     elseif kb.isDown("a") or kb.isDown("d") then
       player.coll.left = true
       player.x = x1 * 32
+      player.cx = player.x - 224
     end
     if map[y1][x2] == 0 and map[y2][x2] == 0 then
       player.coll.right = false
     elseif kb.isDown("a") or kb.isDown("d") then
       player.coll.right = true
       player.x = (x2 - 2) * 32
+      player.cx = player.x - 224
     end
   end
   
@@ -141,7 +149,7 @@ function love.update(dt)
     player.cx = player.cx + unit
     player.x = player.x + unit
   end
-  
+
 end
 
 --Функция отрисовки
@@ -164,6 +172,6 @@ function love.draw()
   
 --  Отрисовка ГГ
   
-  gr.draw(block, 144, player.y)
+  gr.draw(block, 224, player.y)
   
 end
