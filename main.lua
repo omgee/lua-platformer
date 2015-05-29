@@ -15,23 +15,24 @@ function love.load()
 --  Карта (матрица 10х10)
 
   map = {
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,1,1,1,1,0,0},
-    {1,0,0,0,0,0,0,0,0,0},
-    {1,0,0,0,0,1,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1},
+    {1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,0,0},
+    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1},
+    {1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   }
   
 --  Класс ГГ
 
   player = {
-    x = 111,
-    y = 118,
+    x = 32,
+    y = 32,
+    cx = 0,
     jump = false,
     jumpSize = 0,
     coll = {
@@ -45,10 +46,10 @@ function love.load()
 --  Подгрузка графики
 
   block = gr.newImage("block.png")
+  iplayer = gr.newImage("testplayer.png")
+      
  
---  Расчет вертикальной коллизии
-  
-  function player.vertical(unit)
+function player.vertical(unit)
     local x1 = math.floor((player.x + 1) / 32) + 1
     local x2 = math.floor((player.x + 31) / 32) + 1
     local y1 = math.floor((player.y + 32 + unit) / 32) + 1
@@ -76,13 +77,13 @@ function love.load()
     local x2 = math.floor((player.x + 32 + unit) / 32) + 1
     if map[y1][x1] == 0 and map[y2][x1] == 0 then
       player.coll.left = false
-    elseif kb.isDown("a") or kb.isDown("d") then
+    else
       player.coll.left = true
       player.x = x1 * 32
     end
     if map[y1][x2] == 0 and map[y2][x2] == 0 then
       player.coll.right = false
-    elseif kb.isDown("a") or kb.isDown("d") then
+    else
       player.coll.right = true
       player.x = (x2 - 2) * 32
     end
@@ -106,7 +107,9 @@ end
 
 --  Функция расчета
 
-function love.update(dt)
+function love.update(dt, cx, x)
+  
+ 
 
 --  Еденица движения
 
@@ -132,14 +135,44 @@ function love.update(dt)
   end
   
   if not player.coll.left and kb.isDown("a") then
+    ox = true
     player.x = player.x - unit
   end
   
   if not player.coll.right and kb.isDown("d") then
+    ox = true
     player.x = player.x + unit
+    
   end
+  end
+  -- делаем норм ox
+  if player.x < 144 or player.x > 460 then
+    
+    ox = false
+    end
   
+
+  
+  
+  function ox(x, unit, cx)
+  if player.x - unit then
+    cx = cx - unit
+  else cx = 0
+  if player.x + unit then
+    cx = cx + unit
+    else cx = 0
+    
+  end
 end
+end
+    
+    
+  
+  
+   
+  
+  
+
 
 --Функция отрисовки
 
@@ -154,13 +187,14 @@ function love.draw()
   for i = 1, #map do
     for k = 1, #map[i] do
       if map[i][k] == 1 then
-        gr.draw(block, (k - 1) * 32, (i - 1) * 32)
+        gr.draw(block, ((k - 1) * 32) - player.cx , (i - 1) * 32)
       end
     end
   end
   
 --  Отрисовка ГГ
   
-  gr.draw(block, player.x, player.y)
+  gr.draw(iplayer, player.x, player.y)
+  gr.print(player.x, 0, 0)
   
 end
