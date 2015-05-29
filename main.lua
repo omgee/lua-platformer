@@ -107,7 +107,7 @@ end
 
 --  Функция расчета
 
-function love.update(dt)
+function love.update(dt, cx, x)
   
  
 
@@ -135,17 +135,23 @@ function love.update(dt)
   end
   
   if not player.coll.left and kb.isDown("a") then
-    
+    ox = true
     player.x = player.x - unit
   end
   
   if not player.coll.right and kb.isDown("d") then
-    
+    ox = true
     player.x = player.x + unit
-  
+    
   end
-  -- делаем норм cx
-end
+  end
+  -- делаем норм ox
+  if player.x < 144 or player.x > 460 then
+    
+    ox = false
+    end
+  
+
   
   
   function ox(x, unit, cx)
@@ -188,7 +194,7 @@ function love.draw()
   
 --  Отрисовка ГГ
   
-  gr.draw(iplayer, x, player.y, player.cx)
+  gr.draw(iplayer, player.x, player.y)
   gr.print(player.x, 0, 0)
   
 end
