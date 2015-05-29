@@ -18,9 +18,9 @@ function love.load()
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1},
+    {1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,0,0},
+    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1},
     {1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -46,10 +46,10 @@ function love.load()
 --  Подгрузка графики
 
   block = gr.newImage("block.png")
+  iplayer = gr.newImage("testplayer.png")
+      
  
---  Расчет вертикальной коллизии
-  
-  function player.vertical(unit)
+function player.vertical(unit)
     local x1 = math.floor((player.x + 1) / 32) + 1
     local x2 = math.floor((player.x + 31) / 32) + 1
     local y1 = math.floor((player.y + 32 + unit) / 32) + 1
@@ -73,17 +73,17 @@ function love.load()
   function player.horizontal(unit)
     local y1 = math.floor((player.y + 1) / 32) + 1
     local y2 = math.floor((player.y + 31) / 32) + 1
-    local x1 = math.floor((144 - unit + player.cx) / 32) + 1
-    local x2 = math.floor((144 + 32 + unit + player.cx) / 32) + 1
+    local x1 = math.floor((player.x - unit) / 32) + 1
+    local x2 = math.floor((player.x + 32 + unit) / 32) + 1
     if map[y1][x1] == 0 and map[y2][x1] == 0 then
       player.coll.left = false
-    elseif kb.isDown("a") or kb.isDown("d") then
+    else
       player.coll.left = true
       player.x = x1 * 32
     end
     if map[y1][x2] == 0 and map[y2][x2] == 0 then
       player.coll.right = false
-    elseif kb.isDown("a") or kb.isDown("d") then
+    else
       player.coll.right = true
       player.x = (x2 - 2) * 32
     end
@@ -108,6 +108,8 @@ end
 --  Функция расчета
 
 function love.update(dt)
+  
+ 
 
 --  Еденица движения
 
@@ -133,16 +135,24 @@ function love.update(dt)
   end
   
   if not player.coll.left and kb.isDown("a") then
-    player.cx = player.cx - unit
+    
     player.x = player.x - unit
   end
   
   if not player.coll.right and kb.isDown("d") then
-    player.cx = player.cx + unit
+    
     player.x = player.x + unit
   end
+  -- делаем норм cx
+ 
   
-end
+    
+  end
+  
+   
+  
+  
+
 
 --Функция отрисовки
 
@@ -157,13 +167,14 @@ function love.draw()
   for i = 1, #map do
     for k = 1, #map[i] do
       if map[i][k] == 1 then
-        gr.draw(block, ((k - 1) * 32) - player.cx, (i - 1) * 32)
+        gr.draw(block, (k - 1) * 32 , (i - 1) * 32)
       end
     end
   end
   
 --  Отрисовка ГГ
   
-  gr.draw(block, 144, player.y)
+  gr.draw(iplayer, 144, player.y)
+  gr.print(player.x, 0, 0)
   
 end
