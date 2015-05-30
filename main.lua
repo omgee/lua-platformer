@@ -145,7 +145,7 @@ function love.update(dt, cx, x)
     
   end
   end
-  -- делаем норм ox
+  -- делаем норм cx
   if player.x < 144 or player.x > 460 then
     
     ox = false
