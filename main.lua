@@ -133,20 +133,20 @@ function love.update(dt, cx, x)
     player.x = player.x + unit
     
   end
+
+ 
+ -- делаем норм cx
+
+  if player.сx == 0 then
+    print(player.x)
   end
-  -- делаем норм cx
-  if player.x < 144 or player.x > 460 then
-    
-    ox = false
-    end
-  
 
   
   
   function ox(x, unit, cx)
   if player.x - unit then
     cx = cx - unit
-  else cx = 0
+  else cx = 0 end
   if player.x + unit then
     cx = cx + unit
     else cx = 0
@@ -154,6 +154,7 @@ function love.update(dt, cx, x)
   end
 end
 end
+
     
     
   
